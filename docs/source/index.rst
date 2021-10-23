@@ -1,7 +1,7 @@
 Welcome to CTReconstruction's documentation!
 ===================================
 
-**CTReconstruction** (/lu'make/) is a Python library for computed tomography(CT) reconstruction based on TensoFlow and PyTorch.
+**CTReconstruction** is a Python library for computed tomography (CT) reconstruction based on TensoFlow and PyTorch.
 It pulls data from the `Open Food Facts database <https://world.openfoodfacts.org/>`_
 and offers a *simple* and *intuitive* API.
 
