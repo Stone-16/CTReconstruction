@@ -18,7 +18,6 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'recommonmark',
-    'sphinx_markdown_tables'
 ]
 
 source_suffix = ['.rst', '.md']
