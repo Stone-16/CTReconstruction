@@ -4,6 +4,16 @@ import numpy as np
 class Geometry2d:
     def __init__(self, mode, voxel_shape, voxel_spacing, angles, detector_shape, detector_spacing,
                  distance_source_center=None, distance_source_detector=None):
+        """
+        :param mode: ["parallel2d", "fanbeam2d_equiangular", "fanbeam2d_equispace"]
+        :param voxel_shape: image shape, 512 or [512, 512]
+        :param voxel_spacing: pixel size, 1 or [1.0, 1.0]
+        :param angles: radian, int or list or np.ndarray
+        :param detector_shape: detector length, int
+        :param detector_spacing: detector spacing, int or float
+        :param distance_source_center: distance from source to rotation center
+        :param distance_source_detector: distance from source to detector
+        """
         # whether mode is valid
         mode_supported = ["parallel2d", "fanbeam2d_equiangular", "fanbeam2d_equispace"]
         assert mode in mode_supported, f"Input mode must in {mode_supported}, but got mode '{mode}'."
@@ -82,5 +92,11 @@ class Geometry2d:
 
 
 if __name__ == '__main__':
-    geometry = Geometry2d('parallel2d', 512, 1, 720, 1024, 2)
-    print(geometry.detector_coordinates)
+    geometry = Geometry2d('parallel2d', [512, 512], 1, 720, 1024, 2)
+    # example1
+    # geometry = Geometry2d('parallel2d', [512, 512], 1, 720, 1024, 2)
+    # example2
+    # geometry = Geometry2d('parallel2d', 512, [1, 1], 720, 1024, 2)
+    # example3
+    # angles = np.arange(720, dtype=np.float32) * 2 * np.pi / 720
+    # geometry = Geometry2d('parallel2d', 512, [1, 1], angles, 1024, 2)
