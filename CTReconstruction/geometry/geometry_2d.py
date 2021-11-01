@@ -1,0 +1,86 @@
+import numpy as np
+
+
+class Geometry2d:
+    def __init__(self, mode, voxel_shape, voxel_spacing, angles, detector_shape, detector_spacing,
+                 distance_source_center=None, distance_source_detector=None):
+        # whether mode is valid
+        mode_supported = ["parallel2d", "fanbeam2d_equiangular", "fanbeam2d_equispace"]
+        assert mode in mode_supported, f"Input mode must in {mode_supported}, but got mode '{mode}'."
+
+        # whether voxel_shape is valid
+        if isinstance(voxel_shape, (int, float)):
+            self.voxel_shape = np.array([voxel_shape, voxel_shape])
+        elif isinstance(voxel_shape, list):
+            self.voxel_shape = np.array(voxel_shape)
+        elif isinstance(voxel_shape, np.ndarray):
+            self.voxel_shape = voxel_shape
+        else:
+            assert False, f"The type of voxel shape must be int, float, list or np.ndarray, but got '{type(voxel_shape)}'"
+
+        # whether voxel_spacing is valid
+        if isinstance(voxel_spacing, (int, float)):
+            self.voxel_spacing = np.array([voxel_spacing, voxel_spacing])
+        elif isinstance(voxel_spacing, list):
+            self.voxel_spacing = np.array(voxel_spacing)
+        elif isinstance(voxel_spacing, np.ndarray):
+            self.voxel_spacing = voxel_spacing
+        else:
+            assert False, f"The type of voxel spacing must be int, float, list or np.ndarray, but got '{type(voxel_spacing)}'"
+
+        # whether angles is valid
+        if isinstance(angles, int):
+            self.angles = np.arange(angles, dtype=np.float32) * 2 * np.pi / angles
+        elif isinstance(angles, list):
+            self.angles = np.array(angles)
+        elif isinstance(angles, np.ndarray):
+            self.angles = angles
+        else:
+            assert False, f"The type of angles must be int, list or np.ndarray, but got '{type(angles)}'"
+
+        # whether detector_shape is valid
+        if isinstance(detector_shape, int):
+            self.detector_shape = detector_shape
+        else:
+            assert False, f"The type of detector shape must be int, but got '{type(detector_shape)}'"
+
+        # whether detector_spacing is valid
+        if isinstance(detector_spacing, int):
+            self.detector_spacing = detector_spacing
+        else:
+            assert False, f"The type of detector spacing must be int, but got '{type(detector_spacing)}'"
+
+        # whether distance_source_center and distance_source_detector are valid
+        if mode == "parallel2d":
+            self.distance_source_center = np.max(self.voxel_shape * self.voxel_spacing)
+            self.distance_source_detector = 2 * self.distance_source_center
+        else:
+            if distance_source_center is not None and distance_source_detector is not None:
+                if isinstance(distance_source_center, (int, float)):
+                    self.distance_source_center = distance_source_center
+                else:
+                    assert False, f"The type of distance_source_center must be int or float, but got '{type(distance_source_center)}'"
+                if isinstance(distance_source_detector, (int, float)):
+                    self.distance_source_detector = distance_source_detector
+                else:
+                    assert False, f"The type of distance_source_detector must be int or float, but got '{type(distance_source_detector)}'"
+            else:
+                assert False, f"distance_source_center and distance_source_detector must both be given in nonparallel mode."
+
+        if mode == "parallel2d":
+            self.source_coordinates = np.repeat([[-self.distance_source_center, 0]], self.angles.shape[0], axis=0)
+            detector_x = np.array([[self.distance_source_center]] * self.detector_shape)
+            detector_y = (np.arange(self.detector_shape) - (self.detector_shape - 1) / 2.0) * self.detector_spacing
+            detector_y = np.expand_dims(detector_y, axis=1)
+            self.detector_coordinates = np.concatenate((detector_x, detector_y), axis=1)
+        if mode == "fanbeam2d_equiangular":
+            # TODO
+            pass
+        if mode == "fanbeam2d_equispace":
+            # TODO
+            pass
+
+
+if __name__ == '__main__':
+    geometry = Geometry2d('parallel2d', 512, 1, 720, 1024, 2)
+    print(geometry.detector_coordinates)
