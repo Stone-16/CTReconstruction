@@ -92,7 +92,7 @@ class Geometry2d:
 
 
 if __name__ == '__main__':
-    geometry = Geometry2d('parallel2d', [512, 512], 1, 720, 1024, 2)
+    geometry = Geometry2d('parallel2d', 512, 1, 720, 1024, 2)
     # example1
     # geometry = Geometry2d('parallel2d', [512, 512], 1, 720, 1024, 2)
     # example2
