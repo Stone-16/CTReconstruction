@@ -1,3 +1,5 @@
+import numpy as np
+
 class Projector:
     def __init__(self, geometry, device='cuda'):
         assert device in ['cuda', 'cpu'], f"Input device must be 'cpu' or 'cuda', but got device '{device}'."
@@ -7,7 +9,8 @@ class Projector:
 
     def projection(self, img):
         # TODO
-        sinogram = None
+        sinogram = np.zeros((self.geometry.angles.shape[0], self.geometry.detector_shape))
+
         return sinogram
 
     def filter(self, sinogram, filter_type):
@@ -22,6 +25,6 @@ class Projector:
 
 
 if __name__ == '__main__':
-    from geometry import Geometry2d
+    from ..geometry import Geometry2d
 
     geometry = Geometry2d('parallel2d', 512, 1, 720, 1024, 2)
