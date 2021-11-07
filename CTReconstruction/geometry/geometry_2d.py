@@ -13,7 +13,7 @@ class Geometry2d:
         :param detector_spacing: detector spacing, int or float
         :param distance_source_center: distance from source to rotation center
         :param distance_source_detector: distance from source to detector
-
+1
         examples:
         # example1
         geometry = Geometry2d('parallel2d', [512, 512], 1, 720, 1024, 2)

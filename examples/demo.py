@@ -14,14 +14,14 @@ geometry = CTReconstruction.geometry.Geometry2d("fanbeam2d_equispace", 512, 1, 7
 projector = CTReconstruction.projector.Projector(geometry)
 # projeciton
 sinogram = projector.projection(img)
-# show projeciton
+# show sinogram
 plt.figure(2)
 plt.title("Sinogram")
 plt.imshow(sinogram, cmap='gray')
 
 plt.show()
 
-# TODO how to reconstruct
+# TODO how to reconstruct(FBP or ART)
 
 
 
