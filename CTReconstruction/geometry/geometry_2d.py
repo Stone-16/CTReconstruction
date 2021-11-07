@@ -13,6 +13,15 @@ class Geometry2d:
         :param detector_spacing: detector spacing, int or float
         :param distance_source_center: distance from source to rotation center
         :param distance_source_detector: distance from source to detector
+
+        examples:
+        # example1
+        geometry = Geometry2d('parallel2d', [512, 512], 1, 720, 1024, 2)
+        # example2
+        geometry = Geometry2d('parallel2d', 512, [1, 1], 720, 1024, 2)
+        # example3
+        angles = np.arange(720, dtype=np.float32) * 2 * np.pi / 720
+        # geometry = Geometry2d('fanbeam2d_equispace', 512, [1, 1], angles, 1024, 2, 1024, 2048)
         """
         # whether mode is valid
         mode_supported = ["parallel2d", "fanbeam2d_equiangular", "fanbeam2d_equispace"]
@@ -55,7 +64,7 @@ class Geometry2d:
             assert False, f"The type of detector shape must be int, but got '{type(detector_shape)}'"
 
         # whether detector_spacing is valid
-        if isinstance(detector_spacing, int):
+        if isinstance(detector_spacing, (int, float)):
             self.detector_spacing = detector_spacing
         else:
             assert False, f"The type of detector spacing must be int, but got '{type(detector_spacing)}'"
@@ -77,26 +86,32 @@ class Geometry2d:
             else:
                 assert False, f"distance_source_center and distance_source_detector must both be given in nonparallel mode."
 
+        # define grid
+        self.grid = Grid(self.voxel_shape, self.voxel_spacing)
+        # define sinogram's shape
+        self.sinogram_shape = (self.angles.shape[0], self.detector_shape)
+
         if mode == "parallel2d":
-            self.source_coordinates = np.repeat([[-self.distance_source_center, 0]], self.angles.shape[0], axis=0)
+            source_x = np.array([[-self.distance_source_center]] * self.detector_shape)
             detector_x = np.array([[self.distance_source_center]] * self.detector_shape)
             detector_y = (np.arange(self.detector_shape) - (self.detector_shape - 1) / 2.0) * self.detector_spacing
             detector_y = np.expand_dims(detector_y, axis=1)
             self.detector_coordinates = np.concatenate((detector_x, detector_y), axis=1)
+            self.source_coordinates = np.concatenate((source_x, detector_y), axis=1)
         if mode == "fanbeam2d_equiangular":
             # TODO
             pass
         if mode == "fanbeam2d_equispace":
-            # TODO
-            pass
+            self.source_coordinates = np.repeat([[-self.distance_source_center, 0]], self.detector_shape, axis=0)
+            detector_x = np.array([[self.distance_source_detector - self.distance_source_center]] * self.detector_shape)
+            detector_y = (np.arange(self.detector_shape) - (self.detector_shape - 1) / 2.0) * self.detector_spacing
+            detector_y = np.expand_dims(detector_y, axis=1)
+            self.detector_coordinates = np.concatenate((detector_x, detector_y), axis=1)
 
 
-if __name__ == '__main__':
-    geometry = Geometry2d('parallel2d', 512, 1, 720, 1024, 2)
-    # example1
-    # geometry = Geometry2d('parallel2d', [512, 512], 1, 720, 1024, 2)
-    # example2
-    # geometry = Geometry2d('parallel2d', 512, [1, 1], 720, 1024, 2)
-    # example3
-    # angles = np.arange(720, dtype=np.float32) * 2 * np.pi / 720
-    # geometry = Geometry2d('parallel2d', 512, [1, 1], angles, 1024, 2)
+class Grid:
+    def __init__(self, voxel_shape, voxel_spacing):
+        self.voxel_shape = voxel_shape
+        self.voxel_spacing = voxel_spacing
+        self.x_grid = (np.arange(voxel_shape[0] + 1) - voxel_shape[0] / 2.0) * voxel_spacing[0]
+        self.y_grid = (np.arange(voxel_shape[1] + 1) - voxel_shape[1] / 2.0) * voxel_spacing[1]

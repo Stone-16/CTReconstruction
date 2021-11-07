@@ -1,4 +1,6 @@
 import numpy as np
+from .projection import projection_siddon_numpy
+
 
 class Projector:
     def __init__(self, geometry, device='cuda'):
@@ -8,12 +10,10 @@ class Projector:
         self.device = device
 
     def projection(self, img):
-        # TODO
-        sinogram = np.zeros((self.geometry.angles.shape[0], self.geometry.detector_shape))
-
+        sinogram = projection_siddon_numpy(img, self.geometry)
         return sinogram
 
-    def filter(self, sinogram, filter_type):
+    def filter(self, sinogram, filter_type="ram-lak"):
         # TODO
         filtered_sinogram = None
         return filtered_sinogram
@@ -22,9 +22,3 @@ class Projector:
         # TODO
         img = None
         return None
-
-
-if __name__ == '__main__':
-    from ..geometry import Geometry2d
-
-    geometry = Geometry2d('parallel2d', 512, 1, 720, 1024, 2)
