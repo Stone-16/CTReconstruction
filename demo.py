@@ -1,0 +1,35 @@
+import CTReconstruction
+import matplotlib.pyplot as plt
+
+# define phantom
+img = CTReconstruction.phantom.shepp_logan_2d(512)
+# show phantom
+plt.figure(1)
+plt.title("Phantom")
+plt.imshow(img, cmap='gray')
+# define geometry
+geometry = CTReconstruction.geometry.Geometry2d("fanbeam2d_equiangular", 512, 1, 720, 1024, 0.001, 1024, 2048)
+#geometry = CTReconstruction.geometry.Geometry2d("parallel2d", 50, 2, 20, 20, 2)
+#geometry = CTReconstruction.geometry.Geometry2d("parallel2d", 512, 1, 720, 1024, 2, 1024, 2048)
+# define projector
+projector = CTReconstruction.projector.Projector(geometry)
+# projeciton
+sinogram = projector.projection(img)
+# show sinogram
+plt.figure(2)
+plt.title("Sinogram")
+plt.imshow(sinogram, cmap='gray')
+
+
+# TODO how to reconstruct(FBP or ART)
+
+print('asd')
+
+voxel = projector.backprojection(sinogram)
+
+plt.figure(3)
+plt.title("voxel")
+plt.imshow(voxel, cmap='gray')
+
+plt.show()
+

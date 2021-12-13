@@ -1,5 +1,19 @@
 import numpy as np
 
+'''
+mode三类["parallel2d", "fanbeam2d_equiangular", "fanbeam2d_equispace"]
+voxel_shape：像素 512，512  大小为2的array，分别是长宽，格子数
+voxel_spacing：1，1  大小为2的array，每格长宽                                        改成2试试？
+angles：把2pi等分成720份 大小为720的array
+detector_shape：1024  探测器个数 int
+detector_spacing： 2 探测器间隔 float
+distance_source_center 1024
+distance_source_detector 2048
+
+
+self.grid 每个格点的坐标
+self.sinogram_shape = (self.angles.shape[0], self.detector_shape) （角度个数，探测器个数）
+'''
 
 class Geometry2d:
     def __init__(self, mode, voxel_shape, voxel_spacing, angles, detector_shape, detector_spacing,
@@ -13,7 +27,7 @@ class Geometry2d:
         :param detector_spacing: detector spacing, int or float
         :param distance_source_center: distance from source to rotation center
         :param distance_source_detector: distance from source to detector
-1
+
         examples:
         # example1
         geometry = Geometry2d('parallel2d', [512, 512], 1, 720, 1024, 2)
@@ -23,6 +37,7 @@ class Geometry2d:
         angles = np.arange(720, dtype=np.float32) * 2 * np.pi / 720
         # geometry = Geometry2d('fanbeam2d_equispace', 512, [1, 1], angles, 1024, 2, 1024, 2048)
         """
+
         # whether mode is valid
         mode_supported = ["parallel2d", "fanbeam2d_equiangular", "fanbeam2d_equispace"]
         assert mode in mode_supported, f"Input mode must in {mode_supported}, but got mode '{mode}'."
@@ -56,6 +71,7 @@ class Geometry2d:
             self.angles = angles
         else:
             assert False, f"The type of angles must be int, list or np.ndarray, but got '{type(angles)}'"
+        # print(self.angles)
 
         # whether detector_shape is valid
         if isinstance(detector_shape, int):
@@ -93,20 +109,38 @@ class Geometry2d:
 
         if mode == "parallel2d":
             source_x = np.array([[-self.distance_source_center]] * self.detector_shape)
+            '二维数组，detector_shape行，1列，每行都是-self.distance_source_center'
             detector_x = np.array([[self.distance_source_center]] * self.detector_shape)
+            '二维数组，detector_shape行，1列，每行都是self.distance_source_center'
             detector_y = (np.arange(self.detector_shape) - (self.detector_shape - 1) / 2.0) * self.detector_spacing
             detector_y = np.expand_dims(detector_y, axis=1)
+            '二维数组，detector_shape行，1列，每行的数关于0对称，共detector_shape个，每个间隔detector_spacing'
             self.detector_coordinates = np.concatenate((detector_x, detector_y), axis=1)
+            #print(self.detector_coordinates)
             self.source_coordinates = np.concatenate((source_x, detector_y), axis=1)
+            #print(self.source_coordinates)
         if mode == "fanbeam2d_equiangular":
             # TODO
-            pass
+            self.source_coordinates = np.repeat([[-self.distance_source_center, 0]], self.detector_shape, axis=0)
+            #print(self.source_coordinates)
+            detector_r = np.array([self.distance_source_detector] * self.detector_shape)
+            #print(detector_r)
+            detector_alpha = (np.arange(self.detector_shape) - (self.detector_shape - 1) / 2.0) * self.detector_spacing
+            self.detector_coordinates = np.zeros([self.detector_shape, 2])
+            #print(type(self.detector_coordinates))
+            for i in range(detector_shape) :
+                self.detector_coordinates[i][0] = detector_r[i] * np.cos(detector_alpha[i]) - self.distance_source_center
+                self.detector_coordinates[i][1] = detector_r[i] * np.sin(detector_alpha[i])
+            #print(self.detector_coordinates)
         if mode == "fanbeam2d_equispace":
             self.source_coordinates = np.repeat([[-self.distance_source_center, 0]], self.detector_shape, axis=0)
+            #焦点复制detector_shape份
             detector_x = np.array([[self.distance_source_detector - self.distance_source_center]] * self.detector_shape)
             detector_y = (np.arange(self.detector_shape) - (self.detector_shape - 1) / 2.0) * self.detector_spacing
             detector_y = np.expand_dims(detector_y, axis=1)
             self.detector_coordinates = np.concatenate((detector_x, detector_y), axis=1)
+            #print(self.detector_coordinates)
+            #print(type(self.detector_coordinates))
 
 
 class Grid:

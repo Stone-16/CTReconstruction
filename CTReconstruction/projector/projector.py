@@ -1,5 +1,6 @@
 import numpy as np
 from .projection import projection_siddon_numpy
+from .backprojection import easy_backprojection
 
 
 class Projector:
@@ -20,5 +21,5 @@ class Projector:
 
     def backprojection(self, sinogram):
         # TODO
-        img = None
-        return None
+        img = easy_backprojection(sinogram,self.geometry)
+        return img
