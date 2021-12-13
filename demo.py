@@ -19,8 +19,7 @@ sinogram = projector.projection(img)
 plt.figure(2)
 plt.title("Sinogram")
 plt.imshow(sinogram, cmap='gray')
-
-
+11
 # TODO how to reconstruct(FBP or ART)
 
 print('asd')
