@@ -1,7 +1,7 @@
 import numpy as np
 
 '''
-addfafsadfs
+addfafsadfsss
 mode三类["parallel2d", "fanbeam2d_equiangular", "fanbeam2d_equispace"]
 voxel_shape：像素 512，512  大小为2的array，分别是长宽，格子数
 voxel_spacing：1，1  大小为2的array，每格长宽                                        改成2试试？
