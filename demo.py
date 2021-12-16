@@ -19,10 +19,13 @@ plt.figure(2)
 plt.title("Sinogram")
 plt.imshow(sinogram, cmap='gray')
 
+# reconstruct(simple)
+iradon = projector.backprojection(sinogram, 720)
+# show iradon
+plt.figure(3)
+plt.title("iradon")
+plt.imshow(iradon, cmap='gray')
+
 plt.show()
 
 # TODO how to reconstruct(FBP or ART)
-
-
-
-

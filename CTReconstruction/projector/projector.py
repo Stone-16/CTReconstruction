@@ -1,5 +1,6 @@
 import numpy as np
 from .projection import projection_siddon_numpy
+from .backprojection import IRandonTransform
 
 
 class Projector:
@@ -18,7 +19,7 @@ class Projector:
         filtered_sinogram = None
         return filtered_sinogram
 
-    def backprojection(self, sinogram):
-        # TODO
+    def backprojection(self, sinogram, steps):
+        iradon = IRandonTransform(sinogram, steps)
         img = None
-        return None
+        return iradon
