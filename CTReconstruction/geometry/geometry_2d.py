@@ -98,9 +98,15 @@ class Geometry2d:
             detector_y = np.expand_dims(detector_y, axis=1)
             self.detector_coordinates = np.concatenate((detector_x, detector_y), axis=1)
             self.source_coordinates = np.concatenate((source_x, detector_y), axis=1)
+        
         if mode == "fanbeam2d_equiangular":
-            # TODO
-            pass
+            self.source_coordinates = np.repeat([[-self.distance_source_center, 0]], self.detector_shape, axis=0)
+            r = self.distance_source_detector - self.distance_source_center
+            angel_unit = self.detector_spacing / r
+            detector_x = r * np.cos((np.arange(self.detector_shape) - (self.detector_shape - 1) / 2.0) * angel_unit)
+            detector_y = r * np.sin((np.arange(self.detector_shape) - (self.detector_shape - 1) / 2.0) * angel_unit)
+            self.detector_coordinates = np.concatenate((detector_x, detector_y), axis=1)
+            
         if mode == "fanbeam2d_equispace":
             self.source_coordinates = np.repeat([[-self.distance_source_center, 0]], self.detector_shape, axis=0)
             detector_x = np.array([[self.distance_source_detector - self.distance_source_center]] * self.detector_shape)

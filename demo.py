@@ -1,4 +1,6 @@
 import CTReconstruction
+# import matplotlib as mpl
+# mpl.use('Qt5Agg')
 import matplotlib.pyplot as plt
 
 # define phantom
@@ -18,10 +20,14 @@ sinogram = projector.projection(img)
 plt.figure(2)
 plt.title("Sinogram")
 plt.imshow(sinogram, cmap='gray')
+# reconstruct
+iradon = projector.backprojection(sinogram, 720)
+# show iradon
+plt.figure(3)
+plt.title("Iradon")
+plt.imshow(iradon, cmap='gray')
 
 plt.show()
-
-# TODO how to reconstruct(FBP or ART)
 
 
 
