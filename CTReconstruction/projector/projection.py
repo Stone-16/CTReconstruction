@@ -14,18 +14,13 @@ def projection_siddon_numpy(img, geometry):
     sinogram = np.zeros(sinogram_shape)
     source_coordinates = geometry.source_coordinates
     detector_coordinates = geometry.detector_coordinates
-    #print(source_coordinates)
-    #print(detector_coordinates)
     angles = geometry.angles
     for theta_i in range(sinogram_shape[0]):
-        #print(theta_i,'------------------------')
         theta = angles[theta_i]
-        #print(theta)
         rotation_matrix = np.array([[np.cos(theta), np.sin(theta)], [-np.sin(theta), np.cos(theta)]])
         source_coordinates_temp = np.dot(source_coordinates, rotation_matrix)
         detector_coordinates_temp = np.dot(detector_coordinates, rotation_matrix)
         for detector in range(sinogram_shape[1]):
-            #print(source_coordinates_temp[detector], detector_coordinates_temp[detector])
             index_x, index_y, length = siddon(source_coordinates_temp[detector], detector_coordinates_temp[detector], geometry.grid)
             #穿过的格子的横纵坐标和长度
             sinogram[theta_i, detector] = np.sum(img[index_y, index_x] * length)

@@ -56,7 +56,7 @@ def shepp_logan_2d(phantom_size: int = 512, modified: bool = True) -> np.ndarray
         y_r = -x * np.sin(theta) + y * np.cos(theta)
 
         p[np.where((x_r ** 2 / a_2 + y_r ** 2 / b_2) <= 1)] += gray
-
+            
     return p
 
 

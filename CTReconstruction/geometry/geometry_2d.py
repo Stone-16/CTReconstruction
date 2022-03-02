@@ -4,7 +4,7 @@ import numpy as np
 addfafsadfsss
 mode三类["parallel2d", "fanbeam2d_equiangular", "fanbeam2d_equispace"]
 voxel_shape：像素 512，512  大小为2的array，分别是长宽，格子数
-voxel_spacing：1，1  大小为2的array，每格长宽                                        改成2试试？
+voxel_spacing：1，1  大小为2的array，每格长宽
 angles：把2pi等分成720份 大小为720的array
 detector_shape：1024  探测器个数 int
 detector_spacing： 2 探测器间隔 float
@@ -72,7 +72,6 @@ class Geometry2d:
             self.angles = angles
         else:
             assert False, f"The type of angles must be int, list or np.ndarray, but got '{type(angles)}'"
-        # print(self.angles)
 
         # whether detector_shape is valid
         if isinstance(detector_shape, int):
@@ -117,22 +116,16 @@ class Geometry2d:
             detector_y = np.expand_dims(detector_y, axis=1)
             '二维数组，detector_shape行，1列，每行的数关于0对称，共detector_shape个，每个间隔detector_spacing'
             self.detector_coordinates = np.concatenate((detector_x, detector_y), axis=1)
-            #print(self.detector_coordinates)
             self.source_coordinates = np.concatenate((source_x, detector_y), axis=1)
-            #print(self.source_coordinates)
         if mode == "fanbeam2d_equiangular":
             # TODO
             self.source_coordinates = np.repeat([[-self.distance_source_center, 0]], self.detector_shape, axis=0)
-            #print(self.source_coordinates)
             detector_r = np.array([self.distance_source_detector] * self.detector_shape)
-            #print(detector_r)
             detector_alpha = (np.arange(self.detector_shape) - (self.detector_shape - 1) / 2.0) * self.detector_spacing
             self.detector_coordinates = np.zeros([self.detector_shape, 2])
-            #print(type(self.detector_coordinates))
             for i in range(detector_shape) :
                 self.detector_coordinates[i][0] = detector_r[i] * np.cos(detector_alpha[i]) - self.distance_source_center
                 self.detector_coordinates[i][1] = detector_r[i] * np.sin(detector_alpha[i])
-            #print(self.detector_coordinates)
         if mode == "fanbeam2d_equispace":
             self.source_coordinates = np.repeat([[-self.distance_source_center, 0]], self.detector_shape, axis=0)
             #焦点复制detector_shape份
@@ -140,9 +133,6 @@ class Geometry2d:
             detector_y = (np.arange(self.detector_shape) - (self.detector_shape - 1) / 2.0) * self.detector_spacing
             detector_y = np.expand_dims(detector_y, axis=1)
             self.detector_coordinates = np.concatenate((detector_x, detector_y), axis=1)
-            #print(self.detector_coordinates)
-            #print(type(self.detector_coordinates))
-
 
 class Grid:
     def __init__(self, voxel_shape, voxel_spacing):
